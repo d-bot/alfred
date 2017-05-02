@@ -13,7 +13,8 @@ class CacheToken:
         res = requests.post(self.api_url, data={'client_id': self.yelp_id,
             'client_secret': self.yelp_secret})
         token = json.loads(res.text)
-        return token['access_token'], token['expires_in'], token['token_type']
+        #return token['access_token'], token['expires_in'], token['token_type']
+        return token['access_token']
 
 #def check_token(token=None):
 #    if token == 0:
