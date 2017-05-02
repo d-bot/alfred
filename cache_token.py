@@ -14,7 +14,7 @@ class CacheToken:
             'client_secret': self.yelp_secret})
         token = json.loads(res.text)
         #return token['access_token'], token['expires_in'], token['token_type']
-        return token['access_token']
+        return token['access_token'], token['expires_in']
 
 #def check_token(token=None):
 #    if token == 0:

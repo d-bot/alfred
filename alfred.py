@@ -13,10 +13,16 @@ from cache_token import CacheToken
 
 app = Flask(__name__)
 
-y_token = CacheToken().get_token()
+y_token, expire_in = CacheToken().get_token()
+expire_at = expire_in + int(time.time())
 
 @app.route('/', methods=['GET', 'POST'])
 def alfred():
+
+    if expire_at < int(time.time()):
+        app.logger.info('Token has expired. Requesting new token')
+        y_token, expire_in = CacheToken().get_token()
+        app.logger.info('Received a new token: {} and it will expire in {}'.format(y_token, expire_in))
 
     if request.form['user_id'] != 'USLACKBOT':
         if re.search('추천', request.form['text']):
