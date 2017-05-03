@@ -37,8 +37,11 @@ def alfred():
             # this is fucking ugly
             m = re.match('^yelp\s+(\S+)\s+(.*)$', request.form['text'])
             term, location = m.group(1), m.group(2)
-            name,url,review_count,rating = yelpbot(term, location)
-            r = name + ' ' + url.split('?')[0] + ' ' + str(review_count) + '\n' + str(rating)
+            try:
+                name,url,review_count,rating = yelpbot(term, location)
+                r = ' *[' + name + ']*\n' + url.split('?')[0] + '\n' + 'Review Count: ' + str(review_count) + '\n' + 'Rating: ' + str(rating)
+            except Exception as e:
+                r = 'Sorry Yelp-bot couldn\'t process your request: {}'.format(type(e)) + str(e)
         else:
             r = test()
 
@@ -54,7 +57,7 @@ def test():
 
 def real_time_search_queries():
     queries = re.findall('<span class="ah_k">(.*)</span>', requests.get('http://naver.com').text)[:20]
-    return "\n".join(queries)
+    return "[ *현재 네이버 실시간 검색 순위* ]\n" + "\n".join(queries)
 
 def yelpbot(term, location):
     #app.logger.info('I am in yelpbot space with {}'.format(y_token))
@@ -91,7 +94,7 @@ if __name__ == '__main__':
     handler.setLevel(logging.INFO)
     app.logger.setLevel(logging.INFO)
     app.logger.addHandler(handler)
-    app.run(host='0.0.0.0', port=5005)
+    app.run(host='0.0.0.0', port=5005, debug=True)
 
 
 
