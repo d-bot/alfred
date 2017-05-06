@@ -22,8 +22,8 @@ def alfred():
         app.logger.info('Token has expired. Requesting new token')
     #    y_token, expire_in = CacheToken().get_token()
     #    app.logger.info('Received a new token: {} and it will expire in {}'.format(y_token, expire_in))
-    else:
-        app.logger.info('Time left: {}'.format(expire_at-int(time.time())))
+    #else:
+    #    app.logger.info('Time left: {}'.format(expire_at-int(time.time())))
 
 
     if request.form['user_id'] != 'USLACKBOT':
@@ -33,15 +33,13 @@ def alfred():
             r = '테스트 하지마라 새끼야'
         elif re.search('실검', request.form['text']):
             r = real_time_search_queries()
-        elif re.match('^yelp\s+(\S+)\s+(.*)$', request.form['text']):
-            # this is fucking ugly
-            m = re.match('^yelp\s+(\S+)\s+(.*)$', request.form['text'])
-            term, location = m.group(1), m.group(2)
+        elif re.search('yelp', request.form['text']):
+            m = re.match('^yelp\s+(.*)\s+(near|in)\s+(.*)$', request.form['text'])
+            term, location = m.group(1), m.group(3)
             try:
-                name,url,review_count,rating = yelpbot(term, location)
-                r = ' *[' + name + ']*\n' + url.split('?')[0] + '\n' + 'Review Count: ' + str(review_count) + '\n' + 'Rating: ' + str(rating)
+                r = yelpbot(term, location)
             except Exception as e:
-                r = 'Sorry Yelp-bot couldn\'t process your request: {}'.format(type(e)) + str(e)
+                r = '*Sorry Yelp-bot couldn\'t process your request:* {} '.format(type(e)) + str(e)
         else:
             r = test()
 
@@ -59,32 +57,33 @@ def real_time_search_queries():
     queries = re.findall('<span class="ah_k">(.*)</span>', requests.get('http://naver.com').text)[:20]
     return "[ *현재 네이버 실시간 검색 순위* ]\n" + "\n".join(queries)
 
-def yelpbot(term, location):
-    #app.logger.info('I am in yelpbot space with {}'.format(y_token))
-
+def check_token_validity():
     if expire_at < int(time.time()):
         app.logger.info('Token has expired. Requesting new token')
         #y_token, expire_in = CacheToken().get_token()  # this makes problematic!!!!
         app.logger.info('Received a new token: {} and it will expire in {}'.format(y_token, expire_in))
-    else:
-        app.logger.info('current token: {}'.format(y_token))
+    #else:
+        #app.logger.info('current token looks ok: {}'.format(y_token))
 
-    app.logger.info('token expiration check is done: {}'.format(y_token))
+
+def yelpbot(term, location):
+    check_token_validity()
     res = requests.get('https://api.yelp.com/v3/businesses/search?term={}&location={}'.format(term, location), headers={'Authorization':'Bearer {}'.format(y_token)})
-
     data = json.loads(res.text)
-
     Restaurant = namedtuple('Restaurant', 'name, url, review_count, rating')
-    # 이렇게 namedtuple 의 청사진을 정의해 놓고 나중에 Restaurant 클래스 쓰듯이 r = Restaurant(a, b, c, d, e) 이렇게 사용
-    # r.name OR r.location 이렇게 표현.
-
     must_try = [restaurant for restaurant in data['businesses'] if restaurant['rating'] > 3.4 and restaurant['review_count'] > 300]
 
     if len(must_try) > 0:
         must_try.sort(key=lambda r: r['review_count'], reverse=True)
-        #app.logger.info(must_try[0])
-        restaurants = [Restaurant(res['name'], res['url'], res['review_count'], res['rating']) for res in must_try]
-        return (restaurants[0].name, restaurants[0].url, restaurants[0].review_count, restaurants[0].rating)
+        restaurants = [Restaurant(res['name'], res['url'], res['review_count'], res['rating'])
+                for res in must_try][:3]
+
+        res_output = ''
+        for res in restaurants:
+            res_output = res_output + " *[ {} ]*\n{}\nReview Count: {}\nRating: {}\n\n".format(res.name, res.url.split('?')[0], res.review_count, res.rating)
+
+        return res_output
+
     else:
         return 'No search result!'
 
