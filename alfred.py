@@ -9,7 +9,9 @@ from collections import namedtuple
 import requests
 
 from flask import Flask, request, Response
+
 from cache_token import CacheToken
+from endic import search_endic
 
 app = Flask(__name__)
 
@@ -33,6 +35,14 @@ def alfred():
             r = '테스트 하지마라 새끼야'
         elif re.search('실검', request.form['text']):
             r = real_time_search_queries()
+        elif re.search('^e\s+', request.form['text']):
+            m = re.match('^e\s+(.*)$', request.form['text'])
+            r = search_endic(m.group(1))
+        elif re.search('^help', request.form['text']):
+            r = '''e [영어단어] : 네이버 사전에서 영어 단어 검색
+yelp [음식종류] near [도시/위치] : 옐프 top 3 레스토랑 검색
+실검 : 네이버 현재 실시간 상위 검색어들
+            '''
         elif re.search('yelp', request.form['text']):
             m = re.match('^yelp\s+(.*)\s+(near|in)\s+(.*)$', request.form['text'])
             term, location = m.group(1), m.group(3)
@@ -93,7 +103,7 @@ if __name__ == '__main__':
     handler.setLevel(logging.INFO)
     app.logger.setLevel(logging.INFO)
     app.logger.addHandler(handler)
-    app.run(host='0.0.0.0', port=5005, debug=True)
+    app.run(host='0.0.0.0', port=5007, debug=True)
 
 
 
