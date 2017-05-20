@@ -7,8 +7,16 @@ import requests
 from flask import Flask, request, Response
 
 from cache_token import CacheToken
-from endic import search_endic
+from scraper import exchange_rate, search_endic
 from yelp_bot import YelpBot
+
+RECOMMEND = re.compile('추천')
+RT_SEARCH = re.compile('실검')
+TEST = re.compile('테스트')
+ENGLISH = re.compile(r'^e\s+(.*)$')
+HELP = re.compile('help')
+EXCHANGE_RATE = re.compile('환율')
+YELP = re.compile(r'^yelp\s+(.*)\s+(near|in)\s+(.*)$')
 
 app = Flask(__name__)
 
@@ -16,19 +24,21 @@ app = Flask(__name__)
 def alfred():
 
     if request.form['user_id'] != 'USLACKBOT':
-        if re.search('추천', request.form['text']):
+        if RECOMMEND.search(request.form['text']):
             r = '뭘 추천해달라는거고 미친놈아'
-        elif re.search('테스트', request.form['text']):
+        elif TEST.search(request.form['text']):
             r = '테스트 하지마라 새끼야'
-        elif re.search('실검', request.form['text']):
+        elif RT_SEARCH.search(request.form['text']):
             r = real_time_search_queries()
-        elif re.search('^e\s+', request.form['text']):
-            m = re.match('^e\s+(.*)$', request.form['text'])
+        elif EXCHANGE_RATE.search('환율'):
+            r = exchange_rate()
+        elif ENGLISH.search(request.form['text']):
+            m = ENGLISH.search(request.form['text'])
             r = search_endic(m.group(1))
-        elif re.search('^help', request.form['text']):
+        elif HELP.search(request.form['text']):
             r = alfred_help()
-        elif re.search('y\s+', request.form['text']):
-            m = re.match('^y\s+(.*)\s+(near|in)\s+(.*)$', request.form['text'])
+        elif YELP.search(request.form['text']):
+            m = YELP.search(request.form['text'])
             term, location = m.group(1), m.group(3)
             try:
                 ybot = YelpBot()
@@ -62,5 +72,6 @@ if __name__ == '__main__':
     handler.setLevel(logging.INFO)
     app.logger.setLevel(logging.INFO)
     app.logger.addHandler(handler)
-    app.run(host='0.0.0.0', port=5007, debug=True)
+    #app.run(host='0.0.0.0', port=5007, debug=True)
+    app.run(host='0.0.0.0', port=5007)
 
