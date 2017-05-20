@@ -30,7 +30,7 @@ def alfred():
             r = '테스트 하지마라 새끼야'
         elif RT_SEARCH.search(request.form['text']):
             r = real_time_search_queries()
-        elif EXCHANGE_RATE.search('환율'):
+        elif EXCHANGE_RATE.search(request.form['text']):
             r = exchange_rate()
         elif ENGLISH.search(request.form['text']):
             m = ENGLISH.search(request.form['text'])
