@@ -47,11 +47,14 @@ def alfred():
             except Exception as e:
                 r = '*Sorry YelpBot couldn\'t process your request:* {} '.format(type(e)) + str(e)
         else:
-            r = random_resp()
+            r = None
 
-        text = '{{"text":"{}"}}'.format(r)
-        resp = Response(response=text, status=200, mimetype="application/json")
-        return resp
+        if r is not None:
+            text = '{{"text":"{}"}}'.format(r)
+            resp = Response(response=text, status=200, mimetype="application/json")
+            return resp
+        else:
+            return 'ok'
     else:
         return 'ok'
 
