@@ -63,18 +63,6 @@ def alfred():
 #    r = ['어쩌라고', '하루 8시간 자라', '오락 그만해라', '책 좀 읽어라', '운동 좀 해라']
 #    return random.choice(r)
 
-def formatter(r):
-    text = '''{
-    "attachments": [
-        {
-            "fallback": "http://m.exchange.daum.net/mobile/exchange/exchangeDetail.daum?code=USD",
-            "text": "<http://m.exchange.daum.net/mobile/exchange/exchangeDetail.daum?code=USD|%s>",
-            "color": "#F35A00"
-        }
-    ]
-    }''' % r
-    return text
-
 
 def alfred_help():
     return '''{
@@ -96,6 +84,11 @@ def alfred_help():
                     "title": "실검",
                     "value": "현재 네이버 실시간 상위 검색어들",
                     "short": true
+                },
+                {
+                    "title": "환율",
+                    "value": "현재 U.S 달러 환율",
+                    "short": true
                 }
             ],
             "color": "#F35A00"
@@ -105,15 +98,16 @@ def alfred_help():
 
 def real_time_search_queries():
     queries = re.findall('<span class="ah_k">(.*)</span>', requests.get('http://naver.com').text)[:20]
-    output = "[ *현재 네이버 실시간 검색 순위* ]\n" + "\n".join(queries)
+    output = "\n".join(queries)
     return '''{
     "attachments": [
         {
+            "title": "%s",
             "text": "%s",
-            "color": "#F35A00"
+            "color": "#36a64f"
         }
     ]
-    }''' % (output)
+    }''' % ('현재 네이버 실시간 검색 순위', output)
 
 
 

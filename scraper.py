@@ -12,11 +12,13 @@ def search_endic(search_term):
     "attachments": [
         {
             "fallback": "m.endic.naver.com/search.nhn",
+            "title": "%s",
+            "title_link": "%s",
             "text": "%s",
-            "color": "#F35A00"
+            "color": "#36a64f"
         }
     ]
-    }''' % (output)
+    }''' % (search_term, 'http://m.endic.naver.com/search.nhn?searchOption=all&query='+search_term, output)
 
 
 
@@ -31,8 +33,10 @@ def exchange_rate():
     "attachments": [
         {
             "fallback": "http://m.exchange.daum.net/mobile/exchange/exchangeDetail.daum?code=USD",
-            "text": "<http://m.exchange.daum.net/mobile/exchange/exchangeDetail.daum?code=USD|%s>",
-            "color": "#F35A00"
+            "title": "U.S 환율",
+            "title_link": "http://m.exchange.daum.net/mobile/exchange/exchangeDetail.daum?code=USD",
+            "text": "%s",
+            "color": "#36a64f"
         }
     ]
     }''' % output

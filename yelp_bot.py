@@ -36,8 +36,11 @@ class YelpBot:
             return '''{
     "attachments": [
         {
+            "pretext": "Top 3 yelp search result",
             "fallback": "API Error- Yelp API not working: https://api.yelp.com/v3/",
-            "text": "<https://api.yelp.com/v3/| Top 3 Search Result > - Top 3 Yelp",
+            "title": "Top 3 Search Result",
+            "title_link": "https://www.yelp.com/",
+            "text": "...",
             "fields": [
                 {
                     "title": "%s",
