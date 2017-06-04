@@ -68,7 +68,8 @@ def alfred_help():
     return '''{
     "attachments": [
         {
-            "text": "* HELP *",
+            "pretext": "이렇게 사용해주세요.",
+            "title": "HELP",
             "fields": [
                 {
                     "title": "eng [영어단어]",
