@@ -7,7 +7,17 @@ def search_endic(search_term):
     url = 'http://m.endic.naver.com/search.nhn?searchOption=all&query=' + str(search_term)
     soup = BeautifulSoup(requests.get(url).text, 'html.parser')
     meanings = soup.select('div > div.word_wrap > ul > li')
-    return "\n".join([m.p.text for m in meanings])
+    output = "\n".join([m.p.text for m in meanings])
+    return '''{
+    "attachments": [
+        {
+            "fallback": "m.endic.naver.com/search.nhn",
+            "text": "%s",
+            "color": "#F35A00"
+        }
+    ]
+    }''' % (output)
+
 
 
 def exchange_rate():
@@ -16,7 +26,16 @@ def exchange_rate():
     exchange_rates = soup.select('div.exchange_table._html_table > table > tbody > tr')
     #ExchangeRate = namedtuple('ExchangeRate', 'country, rate, a_fluc, p_fluc')
     country, unit, kr_rate, actual_fluc, pct_fluc = ([rate.text.split() for rate in exchange_rates][0])
-    return "{}: {} 원  {} ({})".format(unit, kr_rate, actual_fluc, pct_fluc)
+    output = "{}: {} 원  {} ({})".format(unit, kr_rate, actual_fluc, pct_fluc)
+    return '''{
+    "attachments": [
+        {
+            "fallback": "http://m.exchange.daum.net/mobile/exchange/exchangeDetail.daum?code=USD",
+            "text": "<http://m.exchange.daum.net/mobile/exchange/exchangeDetail.daum?code=USD|%s>",
+            "color": "#F35A00"
+        }
+    ]
+    }''' % output
 
 
 if __name__ == '__main__':

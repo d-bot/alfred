@@ -28,14 +28,37 @@ class YelpBot:
 
         if len(must_try) > 0:
             must_try.sort(key=lambda r: r['review_count'], reverse=True)
-            restaurants = [Restaurant(res['name'], res['url'], res['review_count'], res['rating'])
-                    for res in must_try][:3]
-
+            restaurants = [Restaurant(res['name'], res['url'], res['review_count'], res['rating']) for res in must_try][:3]
             res_output = ''
             for res in restaurants:
                 res_output = res_output + " *[ {} ]*\n{}\nReview Count: {}\nRating: {}\n\n".format(res.name, res.url.split('?')[0], res.review_count, res.rating)
 
-            return res_output
+            return '''{
+    "attachments": [
+        {
+            "fallback": "API Error- Yelp API not working: https://api.yelp.com/v3/",
+            "text": "<https://api.yelp.com/v3/| Top 3 Search Result > - Top 3 Yelp",
+            "fields": [
+                {
+                    "title": "%s",
+                    "value": "%s\nReview Count: %s",
+                    "short": false
+                },
+                {
+                    "title": "%s",
+                    "value": "%s\nReview Count: %s",
+                    "short": false
+                },
+                {
+                    "title": "%s",
+                    "value": "%s\nReview Count: %s",
+                    "short": false
+                }
+            ],
+            "color": "#F35A00"
+        }
+    ]
+}''' % (restaurants[0].name, restaurants[0].url.split('?')[0], restaurants[0].review_count, restaurants[1].name, restaurants[1].url.split('?')[0], restaurants[1].review_count, restaurants[2].name, restaurants[2].url.split('?')[0], restaurants[2].review_count)
 
         else:
             return 'No search result!'

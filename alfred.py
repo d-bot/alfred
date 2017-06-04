@@ -13,7 +13,7 @@ from yelp_bot import YelpBot
 RECOMMEND = re.compile('추천')
 RT_SEARCH = re.compile('실검')
 TEST = re.compile('테스트')
-ENGLISH = re.compile(r'^e\s+(.*)$')
+ENGLISH = re.compile(r'^eng\s+(.*)$')
 HELP = re.compile('help')
 EXCHANGE_RATE = re.compile('환율')
 YELP = re.compile(r'^yelp\s+(.*)\s+(near|in)\s+(.*)$')
@@ -50,24 +50,74 @@ def alfred():
             r = None
 
         if r is not None:
-            text = '{{"text":"{}"}}'.format(r)
-            resp = Response(response=text, status=200, mimetype="application/json")
+            #text = '{{"text":"{}"}}'.format(r)
+            #text = formatter(r)
+            resp = Response(response=r, status=200, mimetype="application/json")
             return resp
         else:
             return 'ok'
     else:
         return 'ok'
 
-def random_resp():
-    r = ['어쩌라고', '하루 8시간 자라', '오락 그만해라', '책 좀 읽어라', '운동 좀 해라']
-    return random.choice(r)
+#def random_resp():
+#    r = ['어쩌라고', '하루 8시간 자라', '오락 그만해라', '책 좀 읽어라', '운동 좀 해라']
+#    return random.choice(r)
+
+def formatter(r):
+    text = '''{
+    "attachments": [
+        {
+            "fallback": "http://m.exchange.daum.net/mobile/exchange/exchangeDetail.daum?code=USD",
+            "text": "<http://m.exchange.daum.net/mobile/exchange/exchangeDetail.daum?code=USD|%s>",
+            "color": "#F35A00"
+        }
+    ]
+    }''' % r
+    return text
+
 
 def alfred_help():
-    return 'e [영어단어] : 네이버 사전에서 영어 단어 검색\nyelp [음식종류] near [도시/위치] : 옐프 top 3 레스토랑 검색\n 실검 : 네이버 현재 실시간 상위 검색어들'
+    return '''{
+    "attachments": [
+        {
+            "text": "* HELP *",
+            "fields": [
+                {
+                    "title": "eng [영어단어]",
+                    "value": "네이버 사전에서 영어 단어 검색",
+                    "short": true
+                },
+                {
+                    "title": "yelp [음식종류] near [도시/위치]",
+                    "value": "옐프 top 3 레스토랑 검색",
+                    "short": true
+                },
+                {
+                    "title": "실검",
+                    "value": "현재 네이버 실시간 상위 검색어들",
+                    "short": true
+                }
+            ],
+            "color": "#F35A00"
+        }
+    ]
+    }'''
 
 def real_time_search_queries():
     queries = re.findall('<span class="ah_k">(.*)</span>', requests.get('http://naver.com').text)[:20]
-    return "[ *현재 네이버 실시간 검색 순위* ]\n" + "\n".join(queries)
+    output = "[ *현재 네이버 실시간 검색 순위* ]\n" + "\n".join(queries)
+    return '''{
+    "attachments": [
+        {
+            "text": "%s",
+            "color": "#F35A00"
+        }
+    ]
+    }''' % (output)
+
+
+
+
 
 
 if __name__ == '__main__':
@@ -75,6 +125,6 @@ if __name__ == '__main__':
     handler.setLevel(logging.INFO)
     app.logger.setLevel(logging.INFO)
     app.logger.addHandler(handler)
-    #app.run(host='0.0.0.0', port=5007, debug=True)
-    app.run(host='0.0.0.0', port=5007)
+    app.run(host='0.0.0.0', port=5007, debug=True)
+    #app.run(host='0.0.0.0', port=5007)
 
