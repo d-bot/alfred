@@ -15,7 +15,7 @@ def search_endic(search_term):
             "title": "%s",
             "title_link": "%s",
             "text": "%s",
-            "color": "#36a64f"
+            "color": "#52D0DF"
         }
     ]
     }''' % (search_term, 'http://m.endic.naver.com/search.nhn?searchOption=all&query='+search_term, output)
@@ -40,6 +40,54 @@ def exchange_rate():
         }
     ]
     }''' % output
+
+
+def real_time_search_queries():
+    queries = re.findall('<span class="ah_k">(.*)</span>', requests.get('http://naver.com').text)[:20]
+    output = "\n".join(queries)
+    return '''{
+    "attachments": [
+        {
+            "title": "%s",
+            "text": "%s",
+            "color": "#36a64f"
+        }
+    ]
+    }''' % ('현재 네이버 실시간 검색 순위', output)
+
+
+def alfred_help():
+    return '''{
+    "attachments": [
+        {
+            "pretext": "이렇게 사용해주세요.",
+            "title": "HELP",
+            "fields": [
+                {
+                    "title": "eng [영어단어]",
+                    "value": "네이버 사전에서 영어 단어 검색",
+                    "short": true
+                },
+                {
+                    "title": "yelp [음식종류] near [도시/위치]",
+                    "value": "옐프 top 3 레스토랑 검색",
+                    "short": true
+                },
+                {
+                    "title": "실검",
+                    "value": "현재 네이버 실시간 상위 검색어들",
+                    "short": true
+                },
+                {
+                    "title": "환율",
+                    "value": "현재 U.S 달러 환율",
+                    "short": true
+                }
+            ],
+            "color": "#F35A00"
+        }
+    ]
+    }'''
 
 
 if __name__ == '__main__':

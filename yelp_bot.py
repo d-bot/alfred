@@ -58,7 +58,7 @@ class YelpBot:
                     "short": false
                 }
             ],
-            "color": "#F35A00"
+            "color": "#C7111B"
         }
     ]
 }''' % (restaurants[0].name, restaurants[0].url.split('?')[0], restaurants[0].review_count, restaurants[1].name, restaurants[1].url.split('?')[0], restaurants[1].review_count, restaurants[2].name, restaurants[2].url.split('?')[0], restaurants[2].review_count)
