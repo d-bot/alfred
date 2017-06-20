@@ -31,15 +31,18 @@ def alfred():
                     r = action()
                 elif len(m.groups()) == 1:
                     r = action(m.group(1))
-                elif len(m.groups()) == 2:
-                    term, location = m.group(1), m.group(2)
+                elif len(m.groups()) == 3:
+                    term, location = m.group(1), m.group(3)
                     try:
                         ybot = YelpBot()
                         ybot.check_token_validity()
                         r = ybot.call_search_api(term, location)
                     except Exception as ex:
                         r = '*Sorry YelpBot couldn\'t process your request:* {} '.format(type(e)) + str(e)
+                else:
+                    print('I do not understand regex match result: '.format(len(m.groups())))
                 break
+
             elif m is None:
                 r = None
 
