@@ -2,13 +2,14 @@ import re
 import csv
 import glob
 import json
+from collections import OrderedDict
 
 '''
 Type,Trans Date,Post Date,Description,Amount
 Sale,06/08/2017,06/09/2017,SPEEDY'S TACOS,-12.27
 '''
 
-def csv_to_json(csv_file):
+def csv_to_dict(csv_file):
     with open(csv_file) as f:
         reader = csv.DictReader(f)
         for d in reader:
@@ -41,9 +42,15 @@ def parse_trxs(csv_iter):
 def run_household():
     monthly_pmt = {}
     for file in glob.glob('data/*.CSV'):
-        month, grocery = parse_trxs(csv_to_json(file))
+        csv_iterator = csv_to_dict(file)
+        month, grocery = parse_trxs(csv_iterator)
         monthly_pmt[month] = grocery
+        monthly_pmt[month]["total"] = sum(grocery.values())
 
     #return json.dumps(monthly_pmt, indent=4)   # very bad because the return type becomes STRING not DICT !!
-    return monthly_pmt
+    #return OrderedDict(sorted(monthly_pmt.items(), key=lambda x:x[0]))
+    return OrderedDict(sorted(monthly_pmt.items()))
+
+if __name__ == '__main__':
+    print(run_household())
 

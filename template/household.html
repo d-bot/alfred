@@ -21,17 +21,17 @@ google.setOnLoadCallback(drawBasic_{{k}});
 function drawBasic_{{k}}() {
 
     var data = google.visualization.arrayToDataTable([
-        ['Spent', 'Rate', { role: 'style' }],
+        ['Spent', '$', { role: 'style' }],
         ['Amazon', {{r_data[k]["amazon"]}}, 'gold'],
-        ['Safeway', {{r_data[k]["safeway"]}}, 'silver'],
-        ['Whole Food', {{r_data[k]["wholefood"]}}, 'brown'],
-        ['Traders Joe', {{r_data[k]["traderjoe"]}}, 'green'],
+        ['Safeway', {{r_data[k]["safeway"]}}, 'orange'],
+        ['Whole Food', {{r_data[k]["wholefood"]}}, 'green'],
+        ['Traders Joe', {{r_data[k]["traderjoe"]}}, 'brown'],
         ['Korean Markets', {{r_data[k]["koreanmarket"]}}, 'purple'],
-        ['Costco', {{r_data[k]["costco"]}}, 'red']
+        ['Costco', {{r_data[k]["costco"]}}, 'silver']
       ]);
 
       var options = {
-        title: 'Monthly Household Overview: {{k}}',
+        title: '{{k}} Household Overview: ${{r_data[k]["total"]}}',
         chartArea: {width: '50%'},
         hAxis: {
           title: '',
