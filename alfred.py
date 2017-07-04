@@ -2,6 +2,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import random
 import re
+import os
 
 import requests
 from flask import Flask, request, Response, render_template
@@ -19,8 +20,8 @@ YELP = re.compile(r'^yelp\s+(.*)\s+(near|in)\s+(.*)$')
 
 actions = ( (RT_SEARCH, real_time_search_queries), (ENGLISH, search_endic), (HELP, alfred_help), (EXCHANGE_RATE, exchange_rate), (YELP, None) )
 
-app = Flask(__name__, template_folder=template_dir)
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'template')
+app = Flask(__name__, template_folder=template_dir)
 
 @app.route('/', methods=['GET', 'POST'])
 def alfred():
@@ -60,10 +61,13 @@ def alfred():
 
 @app.route('/household', methods=['GET'])
 def check_household():
-    r = run_household()
-    resp = Response(response=r, status=200, mimetype="application/json")
-    #return resp
+    r_data = run_household()
     return render_template('household.html', **locals())
+
+@app.route('/test', methods=['GET'])
+def test_household():
+    resp = Response(response=run_household(), status=200, mimetype="application/json")
+    return resp
 
 
 if __name__ == '__main__':

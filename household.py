@@ -44,5 +44,6 @@ def run_household():
         month, grocery = parse_trxs(csv_to_json(file))
         monthly_pmt[month] = grocery
 
-    return json.dumps(monthly_pmt, indent=4)
+    #return json.dumps(monthly_pmt, indent=4)   # very bad because the return type becomes STRING not DICT !!
+    return monthly_pmt
 

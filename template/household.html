@@ -1,0 +1,54 @@
+{% block body %}
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+<table class="columns">
+	{% for k,v in r_data.items(): %}
+	<tr>
+		<td><div id="chart_div_{{k}}"  style="width: 900px; height: 300px;"><div></td>
+	</tr>
+		{% endfor %}
+</table>
+
+
+<script type='text/javascript'>//<![CDATA[
+
+google.load('visualization', '1', {packages: ['corechart', 'bar']});
+
+{% for k,v in r_data.items(): %}
+google.setOnLoadCallback(drawBasic_{{k}});
+
+function drawBasic_{{k}}() {
+
+    var data = google.visualization.arrayToDataTable([
+        ['Spent', 'Rate', { role: 'style' }],
+        ['Amazon', {{r_data[k]["amazon"]}}, 'gold'],
+        ['Safeway', {{r_data[k]["safeway"]}}, 'silver'],
+        ['Whole Food', {{r_data[k]["wholefood"]}}, 'brown'],
+        ['Traders Joe', {{r_data[k]["traderjoe"]}}, 'green'],
+        ['Korean Markets', {{r_data[k]["koreanmarket"]}}, 'purple'],
+        ['Costco', {{r_data[k]["costco"]}}, 'red']
+      ]);
+
+      var options = {
+        title: 'Monthly Household Overview: {{k}}',
+        chartArea: {width: '50%'},
+        hAxis: {
+          title: '',
+          minValue: 0
+        },
+        vAxis: {
+          title: ''
+        }
+      };
+
+      var chart = new google.visualization.BarChart(document.getElementById('chart_div_{{k}}'));
+      chart.draw(data, options);
+}
+{% endfor %}
+
+//]]>
+
+</script>
+
+{% endblock %}
