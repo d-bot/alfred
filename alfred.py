@@ -4,7 +4,7 @@ import random
 import re
 
 import requests
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template
 
 from cache_token import CacheToken
 from scraper import exchange_rate, search_endic, real_time_search_queries, alfred_help
@@ -19,7 +19,8 @@ YELP = re.compile(r'^yelp\s+(.*)\s+(near|in)\s+(.*)$')
 
 actions = ( (RT_SEARCH, real_time_search_queries), (ENGLISH, search_endic), (HELP, alfred_help), (EXCHANGE_RATE, exchange_rate), (YELP, None) )
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=template_dir)
+template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'template')
 
 @app.route('/', methods=['GET', 'POST'])
 def alfred():
@@ -61,7 +62,8 @@ def alfred():
 def check_household():
     r = run_household()
     resp = Response(response=r, status=200, mimetype="application/json")
-    return resp
+    #return resp
+    return render_template('household.html', **locals())
 
 
 if __name__ == '__main__':
