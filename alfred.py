@@ -9,6 +9,7 @@ from flask import Flask, request, Response
 from cache_token import CacheToken
 from scraper import exchange_rate, search_endic, real_time_search_queries, alfred_help
 from yelp_bot import YelpBot
+from household import run_household
 
 RT_SEARCH = re.compile('실검')
 ENGLISH = re.compile(r'^eng\s+(.*)$')
@@ -54,6 +55,13 @@ def alfred():
 
     else:
         return 'ok'
+
+
+@app.route('/household', methods=['GET'])
+def check_household():
+    r = run_household()
+    resp = Response(response=r, status=200, mimetype="application/json")
+    return resp
 
 
 if __name__ == '__main__':
