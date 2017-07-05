@@ -3,7 +3,7 @@
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
 <table class="columns">
-	{% for k,v in r_data.items(): %}
+	{% for k,v in h_data.items(): %}
 	<tr>
 		<td><div id="chart_div_{{k}}"  style="width: 900px; height: 300px;"><div></td>
 	</tr>
@@ -15,23 +15,25 @@
 
 google.load('visualization', '1', {packages: ['corechart', 'bar']});
 
-{% for k,v in r_data.items(): %}
+{% for k,v in h_data.items(): %}
 google.setOnLoadCallback(drawBasic_{{k}});
 
 function drawBasic_{{k}}() {
 
     var data = google.visualization.arrayToDataTable([
         ['Spent', '$', { role: 'style' }],
-        ['Amazon', {{r_data[k]["amazon"]}}, 'gold'],
-        ['Safeway', {{r_data[k]["safeway"]}}, 'orange'],
-        ['Whole Food', {{r_data[k]["wholefood"]}}, 'green'],
-        ['Traders Joe', {{r_data[k]["traderjoe"]}}, 'brown'],
-        ['Korean Markets', {{r_data[k]["koreanmarket"]}}, 'purple'],
-        ['Costco', {{r_data[k]["costco"]}}, 'silver']
+        ['Amazon', {{h_data[k]["amazon"]}}, 'gold'],
+        ['Safeway', {{h_data[k]["safeway"]}}, 'orange'],
+        ['Whole Food', {{h_data[k]["wholefood"]}}, 'green'],
+        ['Traders Joe', {{h_data[k]["traderjoe"]}}, 'brown'],
+        ['Korean Markets', {{h_data[k]["koreanmarket"]}}, 'purple'],
+        ['Costco', {{h_data[k]["costco"]}}, 'silver'],
+        ['Target', {{h_data[k]["target"]}}, 'red'],
+        ['Eat-Out', {{h_data[k]["eatout"]}}, 'blue']
       ]);
 
       var options = {
-        title: '{{k}} Household Overview: ${{r_data[k]["total"]}}',
+        title: '{{k}} Household Overview: ${{'%0.2f' % h_data[k]["total"]}} + $3,233 = ${{'%0.2f' % (h_data[k]["total"]+3233)}}',
         chartArea: {width: '50%'},
         hAxis: {
           title: '',

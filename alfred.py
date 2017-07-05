@@ -59,10 +59,15 @@ def alfred():
         return 'ok'
 
 
-@app.route('/household', methods=['GET'])
-def check_household():
-    r_data = run_household()
+@app.route('/household/<year>', methods=['GET'])
+def check_household(year):
+    h_data = run_household(year)
     return render_template('household.html', **locals())
+
+#@app.route('/eat-out', methods=['GET'])
+#def check_eatout_detail():
+#    e_data = run_eatout()
+#    return render_template('eat-out.html', **locals())
 
 @app.route('/test', methods=['GET'])
 def test_household():
