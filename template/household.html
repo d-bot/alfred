@@ -29,12 +29,25 @@ function drawBasic_{{k}}() {
         ['Korean Markets', {{h_data[k]["koreanmarket"]}}, 'purple'],
         ['Costco', {{h_data[k]["costco"]}}, 'silver'],
         ['Target', {{h_data[k]["target"]}}, 'red'],
-        ['Eat-Out', {{h_data[k]["eatout"]}}, 'blue']
+        ['Eat Out', {{h_data[k]["eatout"]}}, 'blue'],
+        ['Home Repair/Furniture', {{h_data[k]["home_repair"]}}, 'pink']
       ]);
 
       var options = {
-        title: '{{k}} Household Overview: ${{'%0.2f' % h_data[k]["total"]}} + $3,233 = ${{'%0.2f' % (h_data[k]["total"]+3233)}}',
-        chartArea: {width: '50%'},
+
+        {% if year == '2017' %}
+
+            {% if (k.split('_')[0] | int) >= 8 %}
+                title: '{{k}} Household Overview: ${{'%0.2f' % h_data[k]["total"]}} + $701 (utilities) + $3,386.05(mortgage + tax + insurance + hoa) + $980 (daycare) = ${{'%0.2f' % (h_data[k]["total"]+701+3386.05+980)}}',
+            {% else %}
+                title: '{{k}} Household Overview: ${{'%0.2f' % h_data[k]["total"]}} + $701 (utilities) + $3,386.05(mortgage + tax + insurance + hoa) = ${{'%0.2f' % (h_data[k]["total"]+701+3386.05)}}',
+            {% endif %}
+
+        {% else %}
+        title: '{{k}} Household Overview: ${{'%0.2f' % h_data[k]["total"]}} + $701 (utilities) + $3,386.05(mortgage + tax + insurance + hoa) = ${{'%0.2f' % (h_data[k]["total"]+701+3386.05)}}',
+        {% endif %}
+
+        chartArea: {width: '70%'},
         hAxis: {
           title: '',
           minValue: 0

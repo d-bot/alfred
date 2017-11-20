@@ -7,6 +7,9 @@ import os
 import requests
 from flask import Flask, request, Response, render_template
 
+# python algorithm: https://github.com/OmkarPathak/pygorithm
+import pygorithm
+
 from cache_token import CacheToken
 from scraper import exchange_rate, search_endic, real_time_search_queries, alfred_help
 from yelp_bot import YelpBot

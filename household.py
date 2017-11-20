@@ -11,19 +11,36 @@ Sale,06/08/2017,06/09/2017,SPEEDY'S TACOS,-12.27
 
 Classify and add eat-out data
 '''
-fixed_payment = {
-    'mortgage' : -2116.05,
+
+fixed_payment_2016 = {
+    #'mortgage' : -2116.05,
     'comcast' : -69.95,
-    'hoa' : -341.22,
+    #hoa' : -341.22,
+    'MINI COOPER' : -245.20,
+    'verizon' : -170.47,
+    'svpower_utility' : -75,
+    'UMC' : -80,
+    'farmers' : -123,
+}
+
+fixed_payment_2017 = {
+    #'mortgage' : -2116.05,
+    'comcast' : -74.45,
+    #'hoa' : -352.05,
     'honda' : -245.20,
-    'verizon' : -168.86,
-    'svpower_utility' : -150, # -140 ~ -160
-    'farmers' : -142.06,
+    'verizon' : -97.23,
+    'svpower_utility' : -65,
+    'UMC' : -90,
+    'farmers' : -129.32,
 }
 
 def parse_trxs(csv_iter):
-    eat_out_regex = r"(FALAFEL|EPICUREAN|PAD THAI|PHO RESTAURANT|BEIJING RESTAURANT|MYZEN|SPEEDY'S TACOS|IN-N-OUT BURGER|RAMEN MISOYA|SEN DAI SUSHI|BRIX RESTAURANT|MOOBONGRI|ST JOHNS BAR|CHAATS AND CURRYS|CHIPOTLE|BAMBOO LEAF VIETNAMESE|PATXI'S PIZZA-CRESCENT|STARBUCKS|COCOHODO|PARIS BAGUETTE|CHICK-FIL-A|SQ \*YAYOI|DIN TAI FUNG|GODIVA|CHUNGDAM|ANDY'S BAR-B-QUE|MCDONALD|SUPER DUPER BURGER|LA PALOMA RESTAURANT|COWBOY BAR|POPEYES|Red Hot Chilli Pepper|FIVE GUYS BURGERS AND FRI|JANG SU JANG|KUNJIP|KOREAN CHARCOAL SPRING BB|PANDA EXPRESS|HALF MOON BAY BREWING|VILLAGE CALIFORNIA|RAMEN SEAS|BOTTEGA RISTORANTE|KOI PALACE|RED ROBIN|HURLEY'S RESTAURANT|WENTE VINEYARDS|BOUCHON BAKERY YOUNTVILLE|PHILZ COFFEE|THE FISH HOPPER|PF CHANGS)"
-    spendings = { item: 0 for item in ['safeway', 'costco', 'wholefood', 'amazon', 'koreanmarket', 'traderjoe', 'target', 'eatout'] }
+    ''' Remove + transactions
+    '''
+    eat_out_regex = r"(FALAFEL|EPICUREAN|PAD THAI|PHO RESTAURANT|BEIJING RESTAURANT|MYZEN|SPEEDY'S TACOS|IN-N-OUT BURGER|RAMEN MISOYA|SEN DAI SUSHI|BRIX RESTAURANT|MOOBONGRI|ST JOHNS BAR|CHAATS AND CURRYS|CHIPOTLE|BAMBOO LEAF VIETNAMESE|PATXI'S PIZZA-CRESCENT|STARBUCKS|COCOHODO|PARIS BAGUETTE|CHICK-FIL-A|SQ \*YAYOI|DIN TAI FUNG|GODIVA|CHUNGDAM|ANDY'S BAR-B-QUE|MCDONALD|SUPER DUPER BURGER|LA PALOMA RESTAURANT|COWBOY BAR|POPEYES|Red Hot Chilli Pepper|FIVE GUYS BURGERS AND FRI|JANG SU JANG|KUNJIP|KOREAN CHARCOAL SPRING BB|PANDA EXPRESS|HALF MOON BAY BREWING|VILLAGE CALIFORNIA|RAMEN SEAS|BOTTEGA RISTORANTE|KOI PALACE|RED ROBIN|HURLEY'S RESTAURANT|WENTE VINEYARDS|BOUCHON BAKERY YOUNTVILLE|PHILZ COFFEE|THE FISH HOPPER|PF CHANGS|MINAS KOREAN BBQ|SUMIKA|ORCHID AUTHENTIC THAI|MO DU RANG|FALLEN LEAF LAKE|TOUS LES|DISH N|SMASHBURGER|CURRY UP NOW|PEET'S|BONCHON|COCOLA)"
+    home_repair_regex = r"(LOWES|THE HOME DEPOT|ORCHARD SUPPLY|IKEA|CRATE)"
+
+    spendings = { item: 0 for item in ['safeway', 'costco', 'wholefood', 'amazon', 'koreanmarket', 'traderjoe', 'target', 'eatout', 'home_repair'] }
     index_name = None
     for name,desc,amount in csv_iter:
         index_name = name.split('/')[2].split('.')[0]
@@ -41,12 +58,16 @@ def parse_trxs(csv_iter):
             spendings['koreanmarket'] += -amount
         elif re.match(r'^.*ANGUS', desc, re.IGNORECASE):
             spendings['koreanmarket'] += -amount
+        elif re.match(r'^.*KYO-PO PLAZA', desc, re.IGNORECASE):
+            spendings['koreanmarket'] += -amount
         elif re.match(r'^.*TRADER', desc, re.IGNORECASE):
             spendings['traderjoe'] += -amount
         elif re.match(r'^.*TARGET', desc, re.IGNORECASE):
             spendings['target'] += -amount
         elif re.match(eat_out_regex, desc, re.IGNORECASE):
             spendings['eatout'] += -amount
+        elif re.match(home_repair_regex, desc, re.IGNORECASE):
+            spendings['home_repair'] += -amount
 
     return index_name, spendings
 
@@ -76,7 +97,7 @@ def run_household(year):
     '''
     #return json.dumps(monthly_pmt, indent=4)   # very bad because the return type becomes STRING not DICT !!
     #return OrderedDict(sorted(monthly_pmt.items(), key=lambda x:x[0]))
-    return OrderedDict(sorted(monthly_pmt.items()))
+    return OrderedDict(sorted(monthly_pmt.items(), reverse=True))
 
 if __name__ == '__main__':
     od = run_household()
