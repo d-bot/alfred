@@ -37,33 +37,34 @@ fixed_payment_2017 = {
 def parse_trxs(csv_iter):
     ''' Remove + transactions
     '''
-    eat_out_regex = r"(FALAFEL|EPICUREAN|PAD THAI|PHO RESTAURANT|BEIJING RESTAURANT|MYZEN|SPEEDY'S TACOS|IN-N-OUT BURGER|RAMEN MISOYA|SEN DAI SUSHI|BRIX RESTAURANT|MOOBONGRI|ST JOHNS BAR|CHAATS AND CURRYS|CHIPOTLE|BAMBOO LEAF VIETNAMESE|PATXI'S PIZZA-CRESCENT|STARBUCKS|COCOHODO|PARIS BAGUETTE|CHICK-FIL-A|SQ \*YAYOI|DIN TAI FUNG|GODIVA|CHUNGDAM|ANDY'S BAR-B-QUE|MCDONALD|SUPER DUPER BURGER|LA PALOMA RESTAURANT|COWBOY BAR|POPEYES|Red Hot Chilli Pepper|FIVE GUYS BURGERS AND FRI|JANG SU JANG|KUNJIP|KOREAN CHARCOAL SPRING BB|PANDA EXPRESS|HALF MOON BAY BREWING|VILLAGE CALIFORNIA|RAMEN SEAS|BOTTEGA RISTORANTE|KOI PALACE|RED ROBIN|HURLEY'S RESTAURANT|WENTE VINEYARDS|BOUCHON BAKERY YOUNTVILLE|PHILZ COFFEE|THE FISH HOPPER|PF CHANGS|MINAS KOREAN BBQ|SUMIKA|ORCHID AUTHENTIC THAI|MO DU RANG|FALLEN LEAF LAKE|TOUS LES|DISH N|SMASHBURGER|CURRY UP NOW|PEET'S|BONCHON|COCOLA)"
-    home_repair_regex = r"(LOWES|THE HOME DEPOT|ORCHARD SUPPLY|IKEA|CRATE)"
+    eat_out_regex = r"(FALAFEL|EPICUREAN|PAD THAI|PHO RESTAURANT|BEIJING RESTAURANT|MYZEN|SPEEDY'S TACOS|IN-N-OUT BURGER|RAMEN MISOYA|SEN DAI SUSHI|BRIX RESTAURANT|MOOBONGRI|ST JOHNS BAR|CHAATS AND CURRYS|CHIPOTLE|BAMBOO LEAF VIETNAMESE|PATXI'S PIZZA-CRESCENT|STARBUCKS|COCOHODO|PARIS BAGUETTE|CHICK-FIL-A|SQ \*YAYOI|DIN TAI FUNG|GODIVA|CHUNGDAM|ANDY'S BAR-B-QUE|MCDONALD|SUPER DUPER BURGER|LA PALOMA RESTAURANT|COWBOY BAR|POPEYES|Red Hot Chilli Pepper|FIVE GUYS BURGERS AND FRI|JANG SU JANG|KUNJIP|KOREAN CHARCOAL SPRING BB|PANDA EXPRESS|HALF MOON BAY BREWING|VILLAGE CALIFORNIA|RAMEN SEAS|BOTTEGA RISTORANTE|KOI PALACE|RED ROBIN|HURLEY'S RESTAURANT|WENTE VINEYARDS|BOUCHON BAKERY YOUNTVILLE|PHILZ COFFEE|THE FISH HOPPER|PF CHANGS|MINAS KOREAN BBQ|SUMIKA|ORCHID AUTHENTIC THAI|MO DU RANG|FALLEN LEAF LAKE|TOUS LES|DISH N|SMASHBURGER|CURRY UP NOW|PEET'S|BONCHON|COCOLA|ARMADILLO|MASA NOODLE|BURGER PIT|HANUL KOREAN FOOD|SO GONG DONG TOFU|SUBWAY|SENOR TACO)"
+    home_repair_regex = r"(LOWES|THE HOME DEPOT|ORCHARD SUPPLY|IKEA|CRATE|AUTONOMOUS INC)"
 
-    spendings = { item: 0 for item in ['safeway', 'costco', 'wholefood', 'amazon', 'koreanmarket', 'traderjoe', 'target', 'eatout', 'home_repair'] }
+    #spendings = { item: 0 for item in ['safeway', 'costco', 'wholefood', 'amazon', 'koreanmarket', 'traderjoe', 'target', 'eatout', 'home_repair'] }
+    spendings = { item: 0 for item in ['grocery', 'amazon', 'eatout', 'home_repair'] }
     index_name = None
     for name,desc,amount in csv_iter:
         index_name = name.split('/')[2].split('.')[0]
         if re.match(r'^.*WHOLEFDS', desc, re.IGNORECASE):
-            spendings['wholefood'] += -amount
+            spendings['grocery'] += -amount
         elif re.match(r'^.*safeway', desc, re.IGNORECASE):
-            spendings['safeway'] += -amount
+            spendings['grocery'] += -amount
         elif re.match(r'^.*costco', desc, re.IGNORECASE):
-            spendings['costco'] += -amount
+            spendings['grocery'] += -amount
         elif re.match(r'^.*amazon', desc, re.IGNORECASE):
             spendings['amazon'] += -amount
         elif re.match(r'^.*GALLERIA', desc, re.IGNORECASE):
-            spendings['koreanmarket'] += -amount
+            spendings['grocery'] += -amount
         elif re.match(r'^.*HANKOOK', desc, re.IGNORECASE):
-            spendings['koreanmarket'] += -amount
+            spendings['grocery'] += -amount
         elif re.match(r'^.*ANGUS', desc, re.IGNORECASE):
-            spendings['koreanmarket'] += -amount
+            spendings['grocery'] += -amount
         elif re.match(r'^.*KYO-PO PLAZA', desc, re.IGNORECASE):
-            spendings['koreanmarket'] += -amount
+            spendings['grocery'] += -amount
         elif re.match(r'^.*TRADER', desc, re.IGNORECASE):
-            spendings['traderjoe'] += -amount
+            spendings['grocery'] += -amount
         elif re.match(r'^.*TARGET', desc, re.IGNORECASE):
-            spendings['target'] += -amount
+            spendings['grocery'] += -amount
         elif re.match(eat_out_regex, desc, re.IGNORECASE):
             spendings['eatout'] += -amount
         elif re.match(home_repair_regex, desc, re.IGNORECASE):

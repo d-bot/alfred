@@ -1,69 +1,56 @@
 {% block body %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<div id="chart_div"></div>
+<br/>
 
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>
+      google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawChart);
 
-<table class="columns">
-	{% for k,v in h_data.items(): %}
-	<tr>
-		<td><div id="chart_div_{{k}}"  style="width: 900px; height: 300px;"><div></td>
-	</tr>
-		{% endfor %}
-</table>
+      function drawChart() {
 
+        var data = google.visualization.arrayToDataTable([
 
-<script type='text/javascript'>//<![CDATA[
+          ['Month', 'Grocery', 'Amazon', 'Eat-Out', 'Home Repair/Improvement', 'Total'],
+          {% for k,v in h_data.items(): %}
+          ["{{k}}", {{h_data[k]["grocery"]}}, {{h_data[k]["amazon"]}}, {{h_data[k]["eatout"]}}, {{h_data[k]["home_repair"]}}, {{h_data[k]["total"]}}],
+          {% endfor %}
+        ]);
 
-google.load('visualization', '1', {packages: ['corechart', 'bar']});
+        var options = {
+          chart: {
+            title: 'Monthly Spendings',
+            subtitle: 'Monthly Grocery/Amazon/Eat-Out/Home Repair/Improvement',
+            chartArea: {width: '70%'},
+          },
+          bars: 'vertical',
+          vAxis: {format: 'decimal'},
+          height: 500,
+          //colors: ['#1b9e77', '#d95f02', '#7570b3']
+          colors: ['gold', 'blue', 'green', 'pink', 'red']
+        };
 
-{% for k,v in h_data.items(): %}
-google.setOnLoadCallback(drawBasic_{{k}});
+        var chart = new google.charts.Bar(document.getElementById('chart_div'));
 
-function drawBasic_{{k}}() {
+        chart.draw(data, google.charts.Bar.convertOptions(options));
 
-    var data = google.visualization.arrayToDataTable([
-        ['Spent', '$', { role: 'style' }],
-        ['Amazon', {{h_data[k]["amazon"]}}, 'gold'],
-        ['Safeway', {{h_data[k]["safeway"]}}, 'orange'],
-        ['Whole Food', {{h_data[k]["wholefood"]}}, 'green'],
-        ['Traders Joe', {{h_data[k]["traderjoe"]}}, 'brown'],
-        ['Korean Markets', {{h_data[k]["koreanmarket"]}}, 'purple'],
-        ['Costco', {{h_data[k]["costco"]}}, 'silver'],
-        ['Target', {{h_data[k]["target"]}}, 'red'],
-        ['Eat Out', {{h_data[k]["eatout"]}}, 'blue'],
-        ['Home Repair/Furniture', {{h_data[k]["home_repair"]}}, 'pink']
-      ]);
+        var btns = document.getElementById('btn-group');
 
-      var options = {
+        btns.onclick = function (e) {
 
-        {% if year == '2017' %}
-
-            {% if (k.split('_')[0] | int) >= 8 %}
-                title: '{{k}} Household Overview: ${{'%0.2f' % h_data[k]["total"]}} + $701 (utilities) + $3,386.05(mortgage + tax + insurance + hoa) + $980 (daycare) = ${{'%0.2f' % (h_data[k]["total"]+701+3386.05+980)}}',
-            {% else %}
-                title: '{{k}} Household Overview: ${{'%0.2f' % h_data[k]["total"]}} + $701 (utilities) + $3,386.05(mortgage + tax + insurance + hoa) = ${{'%0.2f' % (h_data[k]["total"]+701+3386.05)}}',
-            {% endif %}
-
-        {% else %}
-        title: '{{k}} Household Overview: ${{'%0.2f' % h_data[k]["total"]}} + $701 (utilities) + $3,386.05(mortgage + tax + insurance + hoa) = ${{'%0.2f' % (h_data[k]["total"]+701+3386.05)}}',
-        {% endif %}
-
-        chartArea: {width: '70%'},
-        hAxis: {
-          title: '',
-          minValue: 0
-        },
-        vAxis: {
-          title: ''
+          if (e.target.tagName === 'BUTTON') {
+            options.vAxis.format = e.target.id === 'none' ? '' : e.target.id;
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+          }
         }
-      };
-
-      var chart = new google.visualization.BarChart(document.getElementById('chart_div_{{k}}'));
-      chart.draw(data, options);
-}
-{% endfor %}
-
-//]]>
+      }
 
 </script>
 
+<body>
+  <br>
+  <h3>Item Breakdown</h3>
+  <b>Grocery:</b> Safeway + WholeFood + Korean Market + Costco + Trader Joe<br><br>
+    <b>Home Repair/Improvement:</b> Home Depot + LOWE'S + Orchard + IKEA
+</body>
 {% endblock %}
